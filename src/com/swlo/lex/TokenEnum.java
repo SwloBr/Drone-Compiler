@@ -9,6 +9,8 @@ public enum TokenEnum {
     ON("Palavra reservada ON", "on"),
     LPAREN("Abre parênteses", "("),
     RPAREN("Fecha parênteses", ")"),
+    LBRACE("Abre chave", "{"),
+    RBRACE("Fecha chave", "}"),
     COMMA("Vírgula", ","),
     COLON("Dois pontos", ":"),
     END("Ponto e vírgula", ";"),

@@ -52,8 +52,34 @@ public class Analyser {
                         tokens.add(new Token(tokenEnum, tokenValue));
                         matched = true;
                     }
+                } else if (current == '"') {
+                    currentToken.append(current);
+                    currentChar = entryAnalyser.readNextChar();
+                    current = (char) currentChar;
+                    while (currentChar != -1 && current != '"') {
+                        currentToken.append(current);
+                        currentChar = entryAnalyser.readNextChar();
+                        current = (char) currentChar;
+                    }
+                    currentToken.append(current);
+                    currentChar = entryAnalyser.readNextChar();
+                    String tokenValue = currentToken.toString();
+                    TokenEnum tokenEnum = TokenEnum.getEnumByValue(tokenValue);
+                    if (tokenEnum != null) {
+                        tokens.add(new Token(tokenEnum, tokenValue));
+                        matched = true;
+                    }
+                } else if (current == '{' || current == '}') {
+                    currentToken.append(current);
+                    String tokenValue = currentToken.toString();
+                    TokenEnum tokenEnum = TokenEnum.getEnumByValue(tokenValue);
+                    if (tokenEnum != null) {
+                        tokens.add(new Token(tokenEnum, tokenValue));
+                        matched = true;
+                    }
+                    currentChar = entryAnalyser.readNextChar();
                 } else {
-                    while (currentChar != -1 && !Character.isWhitespace(current) && current != ';' && current != '=') {
+                    while (currentChar != -1 && !Character.isWhitespace(current) && current != ';' && current != '=' && current != '{' && current != '}' && current != ':' && current != '"') {
                         currentToken.append(current);
                         currentChar = entryAnalyser.readNextChar();
                         current = (char) currentChar;
@@ -66,6 +92,12 @@ public class Analyser {
                     if (tokenEnum != null) {
                         tokens.add(new Token(tokenEnum, tokenValue));
                         matched = true;
+                    }
+
+                    // Se o próximo caractere for dois pontos, adiciona como token separado
+                    if (current == ':') {
+                        tokens.add(new Token(TokenEnum.COLON, String.valueOf(current)));
+                        currentChar = entryAnalyser.readNextChar();
                     }
                 }
 
