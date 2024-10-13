@@ -1,0 +1,20 @@
+new loc:pos1 = (10, 20);
+new loc:pos2 = (30, 40);
+
+drone drone1 {
+    weight: 5 kg;
+    battery: 20 minutes;
+}
+
+route route1 {
+    start at loc:pos1 altitude 50 m;
+    waypoint at loc:pos2 altitude 60 m;
+    return to start;
+    avoid zone (25, 35) radius 10 m;
+    maintain speed 15 m/s;
+}
+
+on lowBattery {
+    alert "Battery is low!";
+    execute returnHome;
+}
