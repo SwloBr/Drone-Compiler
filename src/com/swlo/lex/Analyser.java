@@ -35,23 +35,42 @@ public class Analyser {
                 char current = (char) currentChar;
 
                 // Constrói o token atual
-                while (currentChar != -1 && !Character.isWhitespace(current) && current != ';' && current != '=') {
+                if (current == '(') {
                     currentToken.append(current);
                     currentChar = entryAnalyser.readNextChar();
                     current = (char) currentChar;
+                    while (currentChar != -1 && current != ')') {
+                        currentToken.append(current);
+                        currentChar = entryAnalyser.readNextChar();
+                        current = (char) currentChar;
+                    }
+                    currentToken.append(current);
+                    currentChar = entryAnalyser.readNextChar();
+                    String tokenValue = currentToken.toString();
+                    TokenEnum tokenEnum = TokenEnum.getEnumByValue(tokenValue);
+                    if (tokenEnum != null) {
+                        tokens.add(new Token(tokenEnum, tokenValue));
+                        matched = true;
+                    }
+                } else {
+                    while (currentChar != -1 && !Character.isWhitespace(current) && current != ';' && current != '=') {
+                        currentToken.append(current);
+                        currentChar = entryAnalyser.readNextChar();
+                        current = (char) currentChar;
+                    }
+
+                    String tokenValue = currentToken.toString();
+
+                    // Verifica tokens baseados no enum TokenEnum
+                    TokenEnum tokenEnum = TokenEnum.getEnumByValue(tokenValue);
+                    if (tokenEnum != null) {
+                        tokens.add(new Token(tokenEnum, tokenValue));
+                        matched = true;
+                    }
                 }
 
-                String tokenValue = currentToken.toString();
-
-                // Verifica tokens baseados no enum TokenEnum
-                TokenEnum tokenEnum = TokenEnum.getEnumByValue(tokenValue);
-                if (tokenEnum != null) {
-                    tokens.add(new Token(tokenEnum, tokenValue));
-                    matched = true;
-                }
-
-                if (!matched && !tokenValue.isEmpty()) {
-                    throw new RuntimeException("Unexpected token: " + tokenValue);
+                if (!matched && !currentToken.toString().isEmpty()) {
+                    throw new RuntimeException("Unexpected token: " + currentToken);
                 }
 
                 // Adiciona tokens específicos como ponto e vírgula e igual
